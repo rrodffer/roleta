@@ -1,26 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { RouletteOption } from '../types'
+import { RouletteOption, RouletteCategory } from '../types'
 
 interface RouletteProps {
   options: RouletteOption[]
   onResult?: (result: RouletteOption) => void
+  onSpinComplete?: () => void
   isSpinning?: boolean
   result?: RouletteOption | null
+  category?: RouletteCategory
 }
 
 const Roulette: React.FC<RouletteProps> = ({ 
   options, 
   onResult, 
+  onSpinComplete,
   isSpinning = false, 
-  result = null 
+  result = null,
+  category 
 }) => {
   const [rotation, setRotation] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const rouletteRef = useRef<HTMLDivElement>(null)
 
-  // Calcular ângulo por opção
-  const anglePerOption = 360 / options.length
+  // Verificar se é uma roleta especial (garrafa)
+  const isBottleRoulette = category?.isSpecial && category?.type === 'bottle'
+
+  // Calcular ângulo por opção (apenas para roletas normais)
+  const anglePerOption = options.length > 0 ? 360 / options.length : 0
 
   // Gerar cores se não fornecidas
   const getOptionColor = (index: number, option: RouletteOption) => {
@@ -33,7 +40,34 @@ const Roulette: React.FC<RouletteProps> = ({
 
   // Função para girar a roleta
   const spinRoulette = () => {
-    if (isAnimating || options.length === 0) return
+    if (isAnimating) return
+
+    // Para garrafa, não precisa de opções
+    if (isBottleRoulette) {
+      setIsAnimating(true)
+      
+      // Número aleatório de rotações (5-10 voltas completas)
+      const randomRotations = Math.random() * 5 + 5
+      const randomAngle = Math.random() * 360
+      
+      // Calcular rotação final
+      const finalRotation = rotation + (randomRotations * 360) + randomAngle
+      setRotation(finalRotation)
+
+      // Finalizar animação
+      setTimeout(() => {
+        setIsAnimating(false)
+        // Para garrafa, não há resultado específico, apenas direção
+        if (onSpinComplete) {
+          onSpinComplete()
+        }
+      }, 3000)
+      
+      return
+    }
+
+    // Lógica original para roletas normais
+    if (options.length === 0) return
 
     setIsAnimating(true)
     
@@ -63,7 +97,39 @@ const Roulette: React.FC<RouletteProps> = ({
     if (isSpinning && !isAnimating) {
       spinRoulette()
     }
-  }, [isSpinning])
+  }, [isSpinning, isAnimating])
+
+  // Renderizar garrafa especial
+  if (isBottleRoulette) {
+    return (
+      <div className="relative w-full max-w-lg mx-auto">
+        <div className="relative w-full aspect-square h-full flex items-center justify-center">
+          {/* Garrafa */}
+          <motion.div
+            ref={rouletteRef}
+            className="relative flex items-center justify-center"
+            animate={{ rotate: rotation }}
+            transition={{ 
+              duration: 3, 
+              ease: [0.25, 0.46, 0.45, 0.94] // Easing suave
+            }}
+            style={{ transformOrigin: 'center' }}
+          >
+            <div className="text-8xl sm:text-9xl lg:text-[12rem]">
+              🍾
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* Texto explicativo */}
+        <div className="mt-6 text-center">
+          <p className="text-gray-600 text-sm">
+            A garrafa apontará em uma direção aleatória
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   if (options.length === 0) {
     return (

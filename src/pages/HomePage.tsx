@@ -39,7 +39,7 @@ const HomePage: React.FC = () => {
   // Obter opções atuais baseado no modo de visualização
   const getCurrentOptions = (): RouletteOption[] => {
     if (viewMode === 'roulette' && selectedCategory) {
-      return selectedCategory.options
+      return selectedCategory.options || []
     }
     if (viewMode === 'roulette' && selectedCustomRoulette) {
       return selectedCustomRoulette.options
@@ -69,7 +69,8 @@ const HomePage: React.FC = () => {
 
   // Girar roleta
   const handleSpin = () => {
-    if (getCurrentOptions().length === 0) return
+    // Para roletas especiais (como garrafa), não precisa de opções
+    if (getCurrentOptions().length === 0 && !selectedCategory?.isSpecial) return
     
     setIsSpinning(true)
     setResult(null)
@@ -78,6 +79,11 @@ const HomePage: React.FC = () => {
   // Lidar com resultado da roleta
   const handleResult = (resultOption: RouletteOption) => {
     setResult(resultOption)
+    setIsSpinning(false)
+  }
+
+  // Lidar com conclusão do giro (para roletas especiais)
+  const handleSpinComplete = () => {
     setIsSpinning(false)
   }
 
@@ -396,20 +402,21 @@ const HomePage: React.FC = () => {
               </div>
 
               {/* Roleta */}
-              
-                <Roulette
-                  options={getCurrentOptions()}
-                  onResult={handleResult}
-                  isSpinning={isSpinning}
-                  result={result}
-                />
+              <Roulette
+                options={getCurrentOptions()}
+                onResult={handleResult}
+                onSpinComplete={handleSpinComplete}
+                isSpinning={isSpinning}
+                result={result}
+                category={selectedCategory || undefined}
+              />
              
 
               {/* Botão de Girar */}
               <div className="text-center">
                 <button
                   onClick={handleSpin}
-                  disabled={isSpinning || getCurrentOptions().length === 0}
+                  disabled={isSpinning || (getCurrentOptions().length === 0 && !selectedCategory?.isSpecial)}
                   className="btn-primary text-lg px-8 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSpinning ? 'Girando...' : '🎯 Girar Roleta'}

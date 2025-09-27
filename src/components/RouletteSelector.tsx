@@ -59,7 +59,7 @@ const RouletteSelector: React.FC<RouletteSelectorProps> = ({
                   {category.description}
                 </p>
                 <div className="flex items-center text-xs text-gray-500">
-                  <span>{category.options.length} opções</span>
+                  <span>{category.options?.length || 0} opções</span>
                 </div>
               </div>
             </div>

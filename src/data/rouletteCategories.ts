@@ -580,6 +580,14 @@ export const rouletteCategories: RouletteCategory[] = [
     ]
   },
   {
+    id: 'garrafa-amigos',
+    name: 'Garrafa dos Amigos',
+    description: 'Garrafa que gira e aponta em uma direção',
+    icon: '🍾',
+    isSpecial: true,
+    type: 'bottle'
+  },
+  {
     id: 'animais',
     name: 'Animais',
     description: 'Escolha um animal',

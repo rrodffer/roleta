@@ -8,8 +8,10 @@ export interface RouletteCategory {
   id: string
   name: string
   description: string
-  options: RouletteOption[]
+  options?: RouletteOption[]
   icon: string
+  isSpecial?: boolean
+  type?: string
 }
 
 export interface CustomRoulette {
