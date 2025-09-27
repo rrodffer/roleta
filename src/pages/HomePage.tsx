@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RouletteCategory, RouletteOption, CustomRoulette } from '../types'
 import { useCustomRoulettes } from '../hooks/useCustomRoulettes'
@@ -6,6 +6,8 @@ import Roulette from '../components/Roulette'
 import RouletteSelector from '../components/RouletteSelector'
 import CustomRouletteCreator from '../components/CustomRouletteCreator'
 import AdSlot from '../components/AdSlot'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
 
 type ViewMode = 'selector' | 'roulette' | 'creator' | 'custom-list'
 
@@ -18,6 +20,21 @@ const HomePage: React.FC = () => {
   const [editingRoulette, setEditingRoulette] = useState<CustomRoulette | null>(null)
   
   const { customRoulettes, addRoulette, updateRoulette, removeRoulette } = useCustomRoulettes()
+  
+  // Referência para a seção da roleta
+  const rouletteSectionRef = useRef<HTMLDivElement>(null)
+  
+  // Função para fazer scroll para a seção da roleta
+  const scrollToRouletteSection = () => {
+    if (rouletteSectionRef.current) {
+      // Usar scrollIntoView com centralização perfeita
+      rouletteSectionRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center'
+      })
+    }
+  }
 
   // Obter opções atuais baseado no modo de visualização
   const getCurrentOptions = (): RouletteOption[] => {
@@ -36,6 +53,8 @@ const HomePage: React.FC = () => {
     setSelectedCustomRoulette(null)
     setViewMode('roulette')
     setResult(null)
+    // Aguardar um pouco para o estado ser atualizado antes de fazer scroll
+    setTimeout(() => scrollToRouletteSection(), 100)
   }
 
   // Lidar com seleção de roleta personalizada
@@ -44,6 +63,8 @@ const HomePage: React.FC = () => {
     setSelectedCategory(null)
     setViewMode('roulette')
     setResult(null)
+    // Aguardar um pouco para o estado ser atualizado antes de fazer scroll
+    setTimeout(() => scrollToRouletteSection(), 100)
   }
 
   // Girar roleta
@@ -87,61 +108,69 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl font-bold mb-6"
-            >
-              🎯 Roletas
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-xl md:text-2xl mb-8 text-primary-100"
-            >
-              Gere roletas personalizadas para decisões, sorteios e diversão
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <button
-                onClick={() => setViewMode('selector')}
-                className="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
-              >
-                Explorar Roletas
-              </button>
-              <button
-                onClick={() => setViewMode('creator')}
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-600 transition-colors"
-              >
-                Criar Personalizada
-              </button>
-            </motion.div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Header - apenas quando não estiver na roleta */}
+      {viewMode !== 'roulette' && <Header />}
 
-      {/* Ad Slot entre Hero e Conteúdo */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <AdSlot 
-          slotId="content-ad-1" 
-          format="auto" 
-          responsive={true}
-          className="max-h-20"
-        />
-      </div>
+      {/* Hero Section - apenas quando não estiver na roleta */}
+      {viewMode !== 'roulette' && (
+        <>
+          <div className="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+              <div className="text-center">
+                <motion.h1
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-4xl md:text-6xl font-bold mb-6"
+                >
+                  🎯 Roletas
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-xl md:text-2xl mb-8 text-primary-100"
+                >
+                  Gere roletas personalizadas para decisões, sorteios e diversão
+                </motion.p>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="flex flex-col sm:flex-row gap-4 justify-center"
+                >
+                  <button
+                    onClick={() => setViewMode('selector')}
+                    className="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-primary-50 transition-colors"
+                  >
+                    Explorar Roletas
+                  </button>
+                  <button
+                    onClick={() => setViewMode('creator')}
+                    className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-600 transition-colors"
+                  >
+                    Criar Personalizada
+                  </button>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+
+          {/* Ad Slot entre Hero e Conteúdo - apenas quando não estiver na roleta */}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <AdSlot 
+              slotId="content-ad-1" 
+              format="auto" 
+              responsive={true}
+              className="max-h-20"
+            />
+          </div>
+        </>
+      )}
 
       {/* Conteúdo Principal */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className={`flex-1 ${viewMode === 'roulette' ? 'flex items-center justify-center' : ''}`}>
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ${viewMode === 'roulette' ? 'py-4' : 'py-8'}`}>
         <AnimatePresence mode="wait">
           {/* Seletor de Roletas */}
           {viewMode === 'selector' && (
@@ -338,6 +367,7 @@ const HomePage: React.FC = () => {
           {/* Visualização da Roleta */}
           {viewMode === 'roulette' && (
             <motion.div
+              ref={rouletteSectionRef}
               key="roulette"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -366,14 +396,14 @@ const HomePage: React.FC = () => {
               </div>
 
               {/* Roleta */}
-              <div className="bg-white rounded-lg border border-gray-200 p-8">
+              
                 <Roulette
                   options={getCurrentOptions()}
                   onResult={handleResult}
                   isSpinning={isSpinning}
                   result={result}
                 />
-              </div>
+             
 
               {/* Botão de Girar */}
               <div className="text-center">
@@ -385,20 +415,14 @@ const HomePage: React.FC = () => {
                   {isSpinning ? 'Girando...' : '🎯 Girar Roleta'}
                 </button>
               </div>
-
-              {/* Ad Slot após a roleta */}
-              <div className="max-w-2xl mx-auto">
-                <AdSlot 
-                  slotId="content-ad-2" 
-                  format="auto" 
-                  responsive={true}
-                  className="max-h-20"
-                />
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+        </div>
+      </main>
+
+      {/* Footer - apenas quando não estiver na roleta */}
+      {viewMode !== 'roulette' && <Footer />}
     </div>
   )
 }

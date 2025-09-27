@@ -74,9 +74,9 @@ const Roulette: React.FC<RouletteProps> = ({
   }
 
   return (
-    <div className="relative w-full max-w-md mx-auto">
+    <div className="relative w-full max-w-lg sm:max-w-2xl lg:max-w-4xl mx-auto">
       {/* Container da Roleta */}
-      <div className="relative w-full aspect-square">
+      <div className="relative w-full aspect-square h-full">
         {/* Roleta */}
         <motion.div
           ref={rouletteRef}
@@ -104,15 +104,15 @@ const Roulette: React.FC<RouletteProps> = ({
               >
                 {/* Texto da opção */}
                 <div
-                  className="absolute text-white font-semibold text-sm sm:text-base"
+                  className="absolute text-white font-semibold text-sm sm:text-lg lg:text-xl xl:text-2xl"
                   style={{
                     left: '50%',
                     top: '50%',
                     transform: `translate(-50%, -50%) rotate(${startAngle + anglePerOption / 2}deg)`,
                     transformOrigin: 'center',
-                    textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.7)',
                     whiteSpace: 'nowrap',
-                    maxWidth: '80%',
+                    maxWidth: '85%',
                     textAlign: 'center'
                   }}
                 >
@@ -125,11 +125,11 @@ const Roulette: React.FC<RouletteProps> = ({
 
         {/* Ponteiro */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-10">
-          <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-red-500"></div>
+          <div className="w-0 h-0 border-l-6 border-r-6 border-b-12 border-l-transparent border-r-transparent border-b-red-500"></div>
         </div>
 
         {/* Centro da roleta */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-white rounded-full border-4 border-gray-300 z-20 shadow-lg"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-full border-4 sm:border-6 border-gray-300 z-20 shadow-lg"></div>
       </div>
 
       {/* Resultado */}
