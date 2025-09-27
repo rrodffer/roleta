@@ -115,7 +115,7 @@ const Roulette: React.FC<RouletteProps> = ({
             }}
             style={{ transformOrigin: 'center' }}
           >
-            <div className="text-8xl sm:text-9xl lg:text-[12rem]">
+            <div className="text-[10rem] sm:text-[12rem] lg:text-[16rem] xl:text-[20rem]">
               🍾
             </div>
           </motion.div>
